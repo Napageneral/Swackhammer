@@ -37,8 +37,11 @@ def get_mma_bet_buttons(driver):
             mma_bet_buttons[bb2] = bet_buttons[1]
 
 
-    # for event_info, bet_button in mma_bet_buttons.items():
-    #     print(event_info)
+    for event_info, bet_button in mma_bet_buttons.items():
+        print(event_info)
+
+
+    place_bet(driver, mma_bet_buttons['Tyler Brandt_Bovada_Priscila Cachoeira vs. Sijara Eubanks_moneyline_Priscila Cachoeira_+193'], 1)
 
     return mma_bet_buttons
 

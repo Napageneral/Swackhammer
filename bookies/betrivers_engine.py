@@ -62,9 +62,9 @@ def get_mma_bet_buttons(driver):
         mma_bet_buttons[bb1] = bet_buttons[0]
         mma_bet_buttons[bb2] = bet_buttons[1]
 
-    test_bet = "Tyler Brandt_betmgm_Nick Fiore vs. Mateusz Rebecki_moneyline_Mateusz Rebecki_-700"
-    test_btn = mma_bet_buttons[test_bet]
-    place_bet(driver, test_btn, 1)
+    # test_bet = "Tyler Brandt_betmgm_Nick Fiore vs. Mateusz Rebecki_moneyline_Mateusz Rebecki_-700"
+    # test_btn = mma_bet_buttons[test_bet]
+    # place_bet(driver, test_btn, 1)
 
     return mma_bet_buttons
 

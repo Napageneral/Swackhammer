@@ -7,45 +7,53 @@ from selenium.webdriver.common.by import By
 from util import scroll_til_element_centered
 
 player_name = "Tyler Brandt"
-bookie_name = "williamHill"
+bookie_name = "draftkings"
 
 
 def login(driver):
     email = "tnapathy@gmail.com"
     username = "Napageneral"
-    password = "Brodee99!1"
+    password = "Ollyollyoxenfree!1"
 
-    login_url = 'https://www.williamhill.com/us/co/bet/'
+    login_url = 'https://myaccount.draftkings.com/login?intendedSiteExp=US-SB&returnPath=%2Ffeatured'
     driver.get(login_url)
 
     time.sleep(1)
-    driver.find_elements(By.CSS_SELECTOR, "button.Button.account-button")[0].click()
-    time.sleep(1)
-    driver.find_elements(By.CSS_SELECTOR, "input#user")[0].send_keys(email)
-    driver.find_elements(By.CSS_SELECTOR, "input#password")[0].send_keys(password)
-    driver.find_element(By.CSS_SELECTOR, "button#submit").click()
+    driver.find_elements(By.CSS_SELECTOR, "input#login-username-input")[0].send_keys(email)
+    driver.find_elements(By.CSS_SELECTOR, "input#login-password-input")[0].send_keys(password)
+    driver.find_element(By.CSS_SELECTOR, "button#login-submit").click()
     time.sleep(1)
 
 def get_mma_bet_buttons(driver):
-    mma_url = "https://www.williamhill.com/us/co/bet/ufcmma/events/all"
+
+    home_url = 'https://co.circasports.com'
+    driver.get(home_url)
+    time.sleep(1)
+    ufc_button = driver.find_elements(By.XPATH, "//a[contains(text(), 'UFC')]")[0]
+    mma_url = ufc_button.get_attribute('href')
 
     mma_bet_buttons = {}
     driver.get(mma_url)
     time.sleep(1)
 
-    events = driver.find_elements(By.CSS_SELECTOR, "div.Expander.competitionExpander")
-    for i in range(len(events)):
-        event = events[i]
-        driver.execute_script("arguments[0].scrollIntoView();", event)
+    event_tabs = driver.find_elements(By.CSS_SELECTOR, "div.v-tabs__div.tab")
+    print(event_tabs)
+    for i in range(len(event_tabs)-1):
+        event = event_tabs[i]
+        driver.execute_script("scrollBy(0,-document.body.scrollTop)")
+        time.sleep(1)
         if i != 0:
             event.click()
+            time.sleep(1)
 
-        matches = driver.find_elements(By.CSS_SELECTOR, "div.EventCard")
+        matches = driver.find_elements(By.CSS_SELECTOR, "div.event")
+        print(len(matches))
         for match in matches:
-            competitor_one = match.find_elements(By.CSS_SELECTOR, "a.competitor.firstCompetitor")[0]
-            competitor_two = match.find_elements(By.CSS_SELECTOR, "a.competitor.lastCompetitor")[0]
+            competitor_one = match.find_elements(By.CSS_SELECTOR, "div.eventTitle.away")[0]
+            competitor_two = match.find_elements(By.CSS_SELECTOR, "div.eventTitle.home")[0]
 
-            bet_buttons = match.find_elements(By.CSS_SELECTOR, "div.selectionContainer")
+            bet_button_container = match.find_element(By.CSS_SELECTOR, "div.market.money")
+            bet_buttons = bet_button_container.find_elements(By.CSS_SELECTOR, "div.flex")
             event_name = competitor_one.text + " vs. " + competitor_two.text
             market_name = "moneyline"
             bb1 = '_'.join(
@@ -57,7 +65,8 @@ def get_mma_bet_buttons(driver):
             mma_bet_buttons[bb1] = bet_buttons[0]
             mma_bet_buttons[bb2] = bet_buttons[1]
 
-    # test_bet = "Tyler Brandt_williamHill_Daniel Argueta vs. Isaac Dulgarian_moneyline_Daniel Argueta_-195"
+
+    # test_bet = "Tyler Brandt_circasport_DEIVESON FIGUEIREDO vs. BRANDON MORENO_moneyline_BRANDON MORENO_-110"
     # test_btn = mma_bet_buttons[test_bet]
     # place_bet(driver, test_btn, 1)
 
@@ -70,12 +79,12 @@ def place_bet(driver, bet_button, bet_amount, test=False):
     time.sleep(1)
 
     if not test:
-        stake_input = driver.find_element(By.CSS_SELECTOR, "input.betslipInputField")
+        stake_input = driver.find_element(By.CSS_SELECTOR, "input#wagerBetSlipIdPerSelection")
         stake_input.clear()
         stake_input.send_keys(str(bet_amount))
         time.sleep(1)
         # TODO: check for limits or lack of funds
-        driver.find_element(By.CSS_SELECTOR, "button[data-qa='place-bet-button']").click()
+        driver.find_element(By.CSS_SELECTOR, "button#btnPlaceBet").click()
         #TODO: check for success or failure
 
 
@@ -83,8 +92,8 @@ def engine():
     opts = ChromeOptions()
     opts.add_argument("--window-size=2560,1440")
     driver = webdriver.Chrome(options=opts)
-    #login(driver)
-    get_mma_bet_buttons(driver)
+    login(driver)
+    #get_mma_bet_buttons(driver)
     time.sleep(60)
 
 
