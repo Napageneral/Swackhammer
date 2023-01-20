@@ -60,7 +60,8 @@ def bovada_engine():
     driver = webdriver.Chrome()
     login(driver)
     get_mma_bet_buttons(driver)
-    time.sleep(60)
+    return driver
+    # time.sleep(60)
 
 
 if __name__ == '__main__':
